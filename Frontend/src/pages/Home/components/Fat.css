@@ -1,0 +1,37 @@
+.textbox h1{
+    font-size: 70px;
+   
+    
+    
+}
+
+.textbox button {
+    padding: 10px 15px;
+    background-color: rgb(32, 32, 32);
+    color: white;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0px 0px 10px rgba(226, 154, 20, 0.5); /* Even shadow around all sides */
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.textbox button:hover {
+    box-shadow: 0px 0px 15px rgba(226, 154, 20, 0.7); /* Stronger glow on hover */
+    transform: translateY(-2px);
+}
+
+.fat{
+    height: 92%;
+    z-index: 2;
+    position: absolute;
+    ;
+}
+
+.gif-background {
+    background-image: url('/modified_matrix.gif'); /* Update path */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+ 
+}
+

@@ -1,0 +1,188 @@
+body {
+    background-color: #111111;
+    color: #d1d0c5;
+}
+
+.problem-container {
+  padding: 1rem;
+  gap: 1.5rem;
+  background-color: #111111;
+  color: #d1d0c5;
+}
+
+.problem-section {
+  background-color: #1a1a1a;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #d1d0c5;
+}
+
+.search-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: #111111;
+  border: 1px solid #4a4a4a;
+  color: #d1d0c5;
+}
+
+.search-input::placeholder {
+  color: #6b7280;
+}
+
+.search-button {
+  background-color: #1a1a1a;
+  color: #d1d0c5;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid #4a4a4a;
+  transition: background-color 0.2s;
+}
+
+.search-button:hover {
+  background-color: #111111;
+}
+
+.search-button:disabled {
+  opacity: 0.5;
+}
+
+.problem-card {
+  padding: 0.75rem;
+  border: 1px solid #4a4a4a;
+  border-radius: 0.25rem;
+  background-color: #111111;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out; /* Faster transition for hover */
+}
+
+.problem-card:hover {
+  background-color: #1a1a1a;
+  border-color: #6b7280;
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+.problem-header {
+  display: flex;
+  align-items: center;
+}
+
+.difficulty-badge {
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.difficulty-easy {
+  background-color: #064e3b;
+  color: #ecfdf5;
+}
+
+.difficulty-medium {
+  background-color: #854d0e;
+  color: #fef9c3;
+}
+
+.difficulty-hard {
+  background-color: #7f1d1d;
+  color: #fee2e2;
+}
+
+.expanded-content {
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  padding: 1rem;
+  border-left: 2px solid #4a4a4a;
+  background-color: #1a1a1a;
+  border-radius: 0.25rem;
+  
+  /* Animation properties */
+  transform-origin: top;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother easing */
+  opacity: 1;
+  max-height: 2000px;
+  overflow: hidden;
+  transform: scaleY(1);
+  animation: expand 0.3s ease-out;
+}
+
+.expanded-content.collapsed {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  transform: scaleY(0);
+}
+
+@keyframes expand {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.topic-tag {
+  background-color: #111111;
+  color: #d1d0c5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #4a4a4a;
+  font-size: 0.875rem;  
+}
+
+.problem-content {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: #d1d0c5;
+    font-size: 0.95rem;
+}
+
+.problem-content code {
+    background-color: #2a2a2a;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.open-problem-btn {
+    background-color: #1a1a1a;
+    color: #d1d0c5;
+    padding: 0.5rem 1rem;
+    border: 1px solid #4a4a4a;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease-in-out;
+    height: fit-content;
+    margin-top: 1rem;
+}
+
+.open-problem-btn:hover {
+    background-color: #2a2a2a;
+    border-color: #6b7280;
+    transform: translateY(-1px);
+}
+
+.open-problem-btn:active {
+    transform: translateY(0);
+}

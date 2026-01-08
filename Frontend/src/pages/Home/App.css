@@ -1,0 +1,18 @@
+#root{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.leftitems button{
+  @apply py-2 pr-6 border-blue-500 border-2 my-1 px-2 flex flex-col w-full
+}
+
+.projects div{
+  border: 2px solid black;
+  height: 70px;
+  width: 130px;
+  text-align: center;
+  padding: 10px;
+}
+

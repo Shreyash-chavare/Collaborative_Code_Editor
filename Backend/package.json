@@ -1,0 +1,31 @@
+{
+  "name": "collaborative-editor-backend",
+  "version": "1.0.0",
+  "main": "app.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "config": "^3.3.12",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "debug": "^4.4.0",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
+    "leetcode-query": "^1.2.3",
+    "mongoose": "^8.12.1",
+    "nodemon": "^3.1.9",
+    "socket.io": "^4.8.1"
+  }
+}

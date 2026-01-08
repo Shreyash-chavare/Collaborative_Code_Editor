@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center h-screen bg-gradient-to-r from-blue-900 to-blue-400">
+    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-center mb-6">Login to your account</h2>
+        <form action="/login" method="POST" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="email" name="Email" class="w-full p-3 border border-gray-300 rounded mt-1" placeholder="Enter your email" required>
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" class="w-full p-3 border border-gray-300 rounded mt-1" placeholder="Enter your password" required>
+            </div>
+            <a href="/forgot" class="block text-right text-sm text-blue-600 hover:underline">Forgot?</a>
+            <button type="submit" class="w-full p-3 bg-blue-600 text-white rounded hover:bg-blue-700">Login now</button>
+        </form>
+        <div class="text-center mt-6">
+            <p class="text-sm">Don't have an account? <a href="/signup" class="text-blue-600 hover:underline">Sign up</a></p>
+        </div>
+    </div>
+</body>
+</html>

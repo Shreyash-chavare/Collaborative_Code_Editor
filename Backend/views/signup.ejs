@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex justify-center items-center h-screen bg-gradient-to-r from-blue-900 to-blue-400">
+    <div class="flex bg-white rounded-lg shadow-lg overflow-hidden w-3/4 max-w-4xl mt-4">
+        <div class="w-1/2 bg-gray-900 text-white p-8 flex flex-col justify-center items-center">
+            <h1 class="text-4xl mb-2">Registration Page</h1>
+            <p class="text-lg">Start Your Developement Journey Here </p>
+        </div>
+        <div class="w-1/2 p-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4">Create an account</h2>
+                <form action="/createusers" method="POST" class="space-y-4">
+                    <div>
+                        <label for="fullname" class="block">Fullname</label>
+                        <input type="text" id="fullname" name="fullname" class="w-full p-2 border rounded" placeholder="Enter your fullname" required>
+                    </div>
+                    <div>
+                        <label for="username" class="block">Username</label>
+                        <input type="text" id="username" name="username" class="w-full p-2 border rounded" placeholder="Enter your username" required>
+                    </div>
+                    <div>
+                        <label for="email" class="block">Email</label>
+                        <input type="email" id="email" name="Email" class="w-full p-2 border rounded" placeholder="Enter your email" required>
+                    </div>
+                    <div>
+                        <label for="password" class="block">Password</label>
+                        <input type="password" id="password" name="password" class="w-full p-2 border rounded" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create account</button>
+                    <button type="button" class="w-full p-2 bg-red-600 text-white rounded hover:bg-red-700 mt-4">Continue with Google</button>
+                </form>
+                <div class="text-center mt-4">
+                    <p>Already have an account? <a href="/api/login" class="text-blue-600 hover:underline">Log in</a></p>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</body>
+</html>

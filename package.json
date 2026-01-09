@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cd Frontend && npm install && npm run build",
     "start": "node Backend/app.js",
     "dev": "nodemon Backend/app.js"
   },

@@ -61,8 +61,8 @@ app.use('/', userRouter);
 const __filename = fileURLToPath(import.meta.url);
 let __dirname = path.dirname(__filename);
 
-
-app.use(express.static(path.join(__dirname, 'public')));
+// Define frontend path (will be used after API routes)
+const frontendPath = path.join(__dirname, '..', 'Frontend', 'dist');
 
 const io = new Server(server, {
     cors: {
@@ -353,16 +353,45 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Root endpoint
+// Serve static files from React build (JS, CSS, images, etc.)
+// This should come after API routes but before catch-all
+app.use(express.static(frontendPath, { index: false })); // index: false prevents serving index.html automatically
+
+// Root endpoint - serve React app in production, or API info in development
 app.get('/', (req, res) => {
-    res.status(200).json({ 
-        message: 'Collaborative Code Editor Backend API',
-        version: '1.0.0',
-        endpoints: {
-            health: '/health',
-            auth: '/api/auth/*',
-            leetcode: '/api/leetcode/*',
-            compile: '/api/compile'
+    if (req.headers.accept && req.headers.accept.includes('text/html')) {
+        // If it's a browser request, serve the React app
+        res.sendFile(path.join(frontendPath, 'index.html'));
+    } else {
+        // API request - return JSON
+        res.status(200).json({ 
+            message: 'Collaborative Code Editor Backend API',
+            version: '1.0.0',
+            endpoints: {
+                health: '/health',
+                auth: '/api/auth/*',
+                leetcode: '/api/leetcode/*',
+                compile: '/api/compile'
+            }
+        });
+    }
+});
+
+// Catch-all handler: serve React app for client-side routes
+// This must be after all API routes and will only match routes not already handled
+app.get('*', (req, res) => {
+    // Skip API routes, socket.io, and health check (these are handled above)
+    if (req.path.startsWith('/api') || 
+        req.path.startsWith('/socket.io') || 
+        req.path === '/health') {
+        return res.status(404).json({ error: 'Route not found' });
+    }
+    
+    // Serve index.html for all other routes (React Router will handle the routing)
+    res.sendFile(path.join(frontendPath, 'index.html'), (err) => {
+        if (err) {
+            console.error('Error sending index.html:', err);
+            res.status(500).send('Error loading page');
         }
     });
 });

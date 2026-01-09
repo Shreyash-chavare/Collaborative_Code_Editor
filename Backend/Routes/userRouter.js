@@ -14,9 +14,10 @@ import { reset } from '../controllers/reset.js';
 
 
 const router=express.Router();
-router.get('/signup',(req,res)=>{ 
-    res.render('signup');
-})
+// Removed GET /signup route - React Router handles this client-side
+// router.get('/signup',(req,res)=>{ 
+//     res.render('signup');
+// })
 const __filename = fileURLToPath(import.meta.url); 
 let __dirname = path.dirname(__filename); 
 // let parentDir = path.join(__dirname, "..")

@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import './index.css'; // Ensure you have this import to apply Tailwind CSS
 import { useAuthstore } from '../../../stores/auth';
-import { Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-import { axiosinstance } from '../../../utils/axios';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -34,24 +33,24 @@ const Signup = () => {
     
     if (success === true) {
       try {
-        const response = await axiosinstance.post("/createusers",formData);
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        const data = await response.json();
-        console.log('Server response:', data);
+        const result = await signup(formData);
         
-        if (data.success) {
+        if (result.success) {
           toast.success("Account created successfully!");
-          navigate('/login');
+          navigate('/profile');
         } else {
-          toast.error(data.message || "Failed to create account");
+          // Handle specific error messages
+          const errorMessage = result.message || "Failed to create account";
+          if (errorMessage.includes('already exists') || errorMessage.includes('already taken')) {
+            toast.error(errorMessage);
+          } else {
+            toast.error(errorMessage);
+          }
         }
       } catch (error) {
         console.error('Error during signup:', error);
-        toast.error("Failed to create account. Please try again.");
+        const errorMessage = error.response?.data?.message || error.message || "Failed to create account. Please try again.";
+        toast.error(errorMessage);
       }
     }
   };

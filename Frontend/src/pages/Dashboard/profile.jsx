@@ -3,6 +3,7 @@ import { Calendar, User, Mail, Plus, LogIn, Code, Users } from 'lucide-react';
 import { useAuthstore } from '../../stores/auth';
 import { useNavigate } from 'react-router-dom';
 import "./App.css"
+import { axiosinstance } from '../../utils/axios';
 
 const Profile = () => {
   const [roomId, setRoomId] = useState('');

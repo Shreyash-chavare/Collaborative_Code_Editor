@@ -35,7 +35,7 @@ const JDoodleCompiler = () => {
         };
 
         try {
-            const response = await axiosinstance.post("/api/compile", JSON.stringify(requestData),);
+            const response = await axiosinstance.post("/api/compile",requestData);
 
             if (!response.ok) {
                 throw new Error("Server error: " + response.statusText);

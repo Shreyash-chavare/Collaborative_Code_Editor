@@ -1,19 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useAuthstore } from "./stores/auth";
 import toast from 'react-hot-toast';
+import axios from "axios";
 
 export const onSignin = async (formData, navigate) => {
     const { login } = useAuthstore.getState();
     try {
-      const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify(formData),
-      });
+      const response = await axios.post("/login", formData);
   
       const data = await response.json();
   

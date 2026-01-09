@@ -34,7 +34,7 @@ const Signup = () => {
     
     if (success === true) {
       try {
-        const response = await axiosinstance.post("/createusers",JSON.stringify(formData));
+        const response = await axiosinstance.post("/createusers",formData);
   
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

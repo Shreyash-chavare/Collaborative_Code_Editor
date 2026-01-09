@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import './index.css';
 import './compiler.css';
 import { io } from 'socket.io-client';
-import axios from 'axios';
 import 'prismjs/themes/prism-tomorrow.css';
 import prism from 'prismjs';
 import { Play, Save, Download, Settings, RefreshCw, X } from 'lucide-react';
@@ -57,7 +56,7 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
 
     useEffect(() => {
         if (!socketRef.current) {
-            socketRef.current = io("http://localhost:3000", {
+            socketRef.current = io(import.meta.env.VITE_BACKEND_URL, {
                 withCredentials: true,
                 transports: ['websocket'],
                 timeout: 10000,
@@ -119,7 +118,7 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
         };
 
         try {
-            const response =  await axiosinstance.post("/api/compile", JSON.stringify(requestData));
+            const response =  await axiosinstance.post("/api/compile", requestData);
 
             if (!response.ok) {
                 throw new Error("Server error: " + response.statusText);

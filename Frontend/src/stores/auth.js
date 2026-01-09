@@ -2,7 +2,6 @@ import {create} from 'zustand';
 import { axiosinstance } from '../utils/axios';
 import { toast } from 'sonner';
 
-const BASE_URL=import.meta.env.MODE==="development"?"http://localhost:3000/":"/"
 
 export const useAuthstore = create((set,get) => ({
     authUser: null,

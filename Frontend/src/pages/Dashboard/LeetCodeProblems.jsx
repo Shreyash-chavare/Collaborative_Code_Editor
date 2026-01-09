@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./problems.css";
 import { useNavigate } from 'react-router-dom';
+import { axiosinstance } from '../../utils/axios';
 const LeetCodeProblems = () => {
     const [problemlist, setProblemlist] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -65,13 +66,7 @@ const LeetCodeProblems = () => {
         const fetchProblems = async () => {
             try {
                 console.log('Starting problems fetch...'); // Debug log
-                const response = await fetch('http://localhost:3000/api/leetcode/problems', {
-                    credentials: 'include',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
+                const response = await axiosinstance.get('/api/leetcode/problems');
 
                 const data = await response.json();
 
@@ -98,12 +93,7 @@ const LeetCodeProblems = () => {
         setSearchLoading(true);
         setError(null);
         try {
-            const response = await fetch(`http://localhost:3000/api/leetcode/problem/${questionId}`, {
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+            const response = await axiosinstance.get(`/api/leetcode/problem/${questionId}`);
 
             const data = await response.json();
 
@@ -140,12 +130,7 @@ const LeetCodeProblems = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/api/leetcode/problem/${problemId}`, {
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+            const response = await axiosinstance.get(`/api/leetcode/problem/${problemId}`);
 
             const data = await response.json();
 

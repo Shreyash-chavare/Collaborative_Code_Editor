@@ -19,12 +19,6 @@ const ForgotPassword = () => {
     if (!email.trim() || !newpass.trim()) {
       return toast.error('Please fill out all fields.');
     }
-
-    // if (newpass == oldpass) {
-    //   return toast.error('Already used Password');
-    // }
-
-    // Check if new password matches confirmation
     if (newpass !== confirmNewPass) {
       return toast.error('New password and confirm password do not match.');
     }

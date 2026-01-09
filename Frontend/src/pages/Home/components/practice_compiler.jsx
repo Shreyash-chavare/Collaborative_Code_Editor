@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import './index.css'; // Ensure you have this import to apply Tailwind CSS
 import './compiler.css';
 import { useLocation } from "react-router-dom";
+import { axiosinstance } from "../../../utils/axios";
 
 const JDoodleCompiler = () => {
     const location = useLocation();
@@ -34,11 +35,7 @@ const JDoodleCompiler = () => {
         };
 
         try {
-            const response = await fetch("http://localhost:3000/api/compile", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(requestData),
-            });
+            const response = await axiosinstance.post("/api/compile", JSON.stringify(requestData),);
 
             if (!response.ok) {
                 throw new Error("Server error: " + response.statusText);

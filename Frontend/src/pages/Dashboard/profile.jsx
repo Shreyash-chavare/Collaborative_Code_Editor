@@ -32,9 +32,7 @@ const Profile = () => {
     const fetchActivityData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('http://localhost:3000/api/user/activity', {
-          credentials: 'include', // Important for cookies/session
-        });
+        const response = await axiosinstance.get(`/api/user/activity`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch activity data');

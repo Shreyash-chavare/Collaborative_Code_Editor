@@ -6,6 +6,7 @@ import axios from 'axios';
 import 'prismjs/themes/prism-tomorrow.css';
 import prism from 'prismjs';
 import { Play, Save, Download, Settings, RefreshCw, X } from 'lucide-react';
+import { axiosinstance } from "../../../utils/axios";
 
 const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
     const [language, setLanguage] = useState(() => localStorage.getItem('compiler_language') || "python3");
@@ -53,45 +54,6 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
         }
     };
 
-    // useEffect(() => {
-    //     if(!socketRef.current){
-    //         socketRef.current = io("http://localhost:3000", {
-    //             withCredentials: true,
-    //             transports: ['websocket'],
-    //             timeout: 10000,
-    //             reconnection: true,
-    //             reconnectionDelay: 1000,
-    //             reconnectionDelayMax: 5000,
-    //             reconnectionAttempts: 5
-    //         })};
-
-
-    //       socketRef.current.on("connect", () => {
-    //             console.log("Connected to server:", socketRef.current.id);
-    //             setSocketId(socketRef.current.id);
-    //         });
-
-    //         socketRef.current.on("connect_error", (error) => {
-    //             console.error("Socket connection error:", error);
-    //         });
-
-    //         socketRef.current.on("message", (data) => {
-    //             console.log(data.roomname, "room", room)
-    //             if (data.roomname === room) {
-    //                 setCode(data.writtencode);
-    //             }
-    //         });
-        
-        
-
-    //     return () => {
-    //         if (socketRef.current && socketRef.current.connected) {
-    //             console.log("Cleaning up socket connection");
-    //             socketRef.current.disconnect();
-    //             socketRef.current = null;
-    //         }
-    //     };
-    // }, [room]);
 
     useEffect(() => {
         if (!socketRef.current) {
@@ -157,11 +119,7 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
         };
 
         try {
-            const response = await fetch("http://localhost:3000/api/compile", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(requestData),
-            });
+            const response =  await axiosinstance.post("/api/compile", JSON.stringify(requestData));
 
             if (!response.ok) {
                 throw new Error("Server error: " + response.statusText);
@@ -187,7 +145,7 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
             setReview("");
             setShowReview(false);
             
-            const response = await axios.post('http://localhost:3000/get-code', { code });
+            const response = await axiosinstance.post('/get-code', { code });
             setReview(response.data);
             setParentReview(response.data);
             setShowReview(true);

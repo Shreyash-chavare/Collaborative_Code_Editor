@@ -4,6 +4,7 @@ import { useAuthstore } from '../../../stores/auth';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { axiosinstance } from '../../../utils/axios';
 
 const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -33,15 +34,7 @@ const Signup = () => {
     
     if (success === true) {
       try {
-        const response = await fetch("http://localhost:3000/createusers", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify(formData),
-          credentials: "include"
-        });
+        const response = await axiosinstance.post("/createusers",JSON.stringify(formData));
   
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -80,7 +80,8 @@ function Dashboard() {
   }, [problemData]);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:3000");
+    socketRef.current= io(import.meta.env.VITE_BACKEND_URL);
+
     socketRef.current.on("members-update", (members) => {
       console.log("members", members);
       setRoomMembers(members);
@@ -123,13 +124,7 @@ function Dashboard() {
   const handleJoinRoom = async () => {
     if (!inputRoomId.trim()) return;
     try {
-      const response = await fetch(`http://localhost:3000/getUsername`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Accept": "application/json"
-        }
-      });
+      const response = await axiosinstance.get('/getUsername');
 
       const data = await response.json();
 

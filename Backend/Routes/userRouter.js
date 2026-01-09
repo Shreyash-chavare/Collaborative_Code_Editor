@@ -26,15 +26,6 @@ let __dirname = path.dirname(__filename);
 
 
 router.get('/api/check',isLoggedIn,authcheck);
-// router.get('/page',(req,res)=>{
-//     res.render('front');
-// })
-
-// router.get('/api/login',(req,res)=>{
-//     res.render('login')
-// })
-
-// const dashpath = path.join(reactPath, "public")
 
 router.get('/getUsername',isLoggedIn, (req, res) => {
     try {
@@ -64,16 +55,6 @@ router.get("/test",(req,res)=>{
     console.log("test")
     res.send("test")
 })
-
-// router.get('/profile',isLoggedIn,(req,res)=>{
-//         const user = req.session.user;
-//         if (user) {
-//             res.render('profile', { user });
-//         } else {
-//             res.status(404).send('User not found');
-//         }
-// })
-
 
 
 

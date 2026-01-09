@@ -65,6 +65,14 @@ let __dirname = path.dirname(__filename);
 // Define frontend path (will be used after API routes)
 const frontendPath = path.join(__dirname, '..', 'Frontend', 'dist');
 
+// Log path information on startup (helpful for debugging in production)
+console.log('=== Path Configuration ===');
+console.log('__dirname:', __dirname);
+console.log('process.cwd():', process.cwd());
+console.log('frontendPath:', frontendPath);
+console.log('index.html exists:', fs.existsSync(path.join(frontendPath, 'index.html')));
+console.log('=======================');
+
 const io = new Server(server, {
     cors: {
         origin:  process.env.NODE_ENV === "production"
@@ -194,6 +202,14 @@ io.on('connection', (socket) => {
 app.use((req, res, next) => {
     if (req.session.user) {
         res.locals.user = req.session.user;
+    }
+    next();
+});
+
+// Debug middleware to log all incoming requests (remove in production if needed)
+app.use((req, res, next) => {
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`[${req.method}] ${req.path}`);
     }
     next();
 });
@@ -355,24 +371,53 @@ app.get('/health', (req, res) => {
 });
 
 // Serve static files from React build (JS, CSS, images, etc.)
-// This should come after API routes but before catch-all
-// index: false prevents serving index.html automatically - we'll handle it manually
+// IMPORTANT: express.static only serves files that exist, and calls next() if file not found
+// So routes like /login, /profile will fall through to our catch-all handler below
+// We only serve static assets here - route requests will be handled by catch-all
 app.use(express.static(frontendPath, { 
-    index: false,
-    fallthrough: true  // Continue to next middleware if file not found
+    index: false,  // Don't automatically serve index.html - we'll handle it manually
+    dotfiles: 'ignore',
+    setHeaders: (res, path) => {
+        // Optional: set headers for static files
+    }
 }));
 
-// Root endpoint - serve React app in production, or API info in development
+// Helper function to serve React app
+const serveReactApp = (req, res) => {
+    const indexPath = path.join(frontendPath, 'index.html');
+    
+    // Check if file exists
+    if (!fs.existsSync(indexPath)) {
+        console.error(`index.html not found at: ${indexPath}`);
+        console.error(`Frontend path: ${frontendPath}`);
+        console.error(`Current working directory: ${process.cwd()}`);
+        console.error(`__dirname: ${__dirname}`);
+        return res.status(500).json({ 
+            error: 'Application not built',
+            message: 'Please build the frontend before deployment. Run: cd Frontend && npm run build',
+            expectedPath: indexPath,
+            frontendPath: frontendPath
+        });
+    }
+    
+    res.sendFile(indexPath, (err) => {
+        if (err) {
+            console.error('Error sending index.html:', err);
+            if (!res.headersSent) {
+                res.status(500).json({ 
+                    error: 'Error loading page',
+                    message: err.message,
+                    path: indexPath
+                });
+            }
+        }
+    });
+};
+
+// Root endpoint - serve React app for browser requests
 app.get('/', (req, res) => {
     if (req.headers.accept && req.headers.accept.includes('text/html')) {
-        // If it's a browser request, serve the React app
-        const indexPath = path.join(frontendPath, 'index.html');
-        res.sendFile(indexPath, (err) => {
-            if (err) {
-                console.error('Error serving index.html at root:', err);
-                res.status(500).send('Error loading application');
-            }
-        });
+        serveReactApp(req, res);
     } else {
         // API request - return JSON
         res.status(200).json({ 
@@ -388,49 +433,67 @@ app.get('/', (req, res) => {
     }
 });
 
-// Catch-all handler: serve React app for client-side routes
-// This must be after all API routes and will only match routes not already handled
+// Catch-all handler: serve React app for ALL client-side routes
+// This MUST be the last route handler - it catches everything not matched above
+// IMPORTANT: This catches ALL GET requests that aren't:
+// 1. Handled by API routes above
+// 2. Static files served by express.static (which calls next() if file not found)
+
+// Handle all HTTP methods for client routes (GET, POST that aren't API, etc.)
+// But most importantly GET for direct URL access and page refreshes
 app.get('*', (req, res) => {
-    // Skip API routes, socket.io, health check, and other backend-only routes
-    const excludedPaths = ['/api', '/socket.io', '/health', '/getUsername', '/home', '/test', '/logout'];
-    const isExcluded = excludedPaths.some(excludedPath => req.path.startsWith(excludedPath) || req.path === excludedPath);
+    // List of backend-only routes that should return 404 if we reach here
+    // (they should have been handled by routes above)
+    const backendOnlyRoutes = [
+        '/api',
+        '/socket.io', 
+        '/health',
+        '/getUsername',
+        '/home',
+        '/test',
+        '/logout'
+    ];
     
-    if (isExcluded) {
-        // If it's an excluded path and we reach here, it means no route matched it
-        return res.status(404).json({ error: 'Route not found', path: req.path });
-    }
+    // Check if this is a backend API route that should have been handled above
+    const isBackendOnlyRoute = backendOnlyRoutes.some(route => {
+        if (req.path === route) return true;
+        if (req.path.startsWith(route + '/')) return true;
+        return false;
+    });
     
-    // For all other routes (like /login, /profile, /signup, /app, etc.), serve the React app
-    const indexPath = path.join(frontendPath, 'index.html');
-    
-    // Check if file exists before trying to send it
-    const fileExists = fs.existsSync(indexPath);
-    
-    if (!fileExists) {
-        console.error(`index.html not found at: ${indexPath}`);
-        console.error(`Frontend path: ${frontendPath}`);
-        return res.status(500).json({ 
-            error: 'Application not built',
-            message: 'Please build the frontend before deployment',
-            expectedPath: indexPath
+    if (isBackendOnlyRoute) {
+        // This backend route wasn't handled above, return 404
+        console.log(`[404] Backend route not found: ${req.method} ${req.path}`);
+        return res.status(404).json({ 
+            error: 'Route not found', 
+            path: req.path,
+            message: 'This API endpoint does not exist'
         });
     }
     
-    console.log(`Serving React app for route: ${req.path}`);
-    res.sendFile(indexPath, (err) => {
-        if (err) {
-            console.error('Error sending index.html:', err);
-            console.error('Frontend path:', frontendPath);
-            console.error('Resolved path:', indexPath);
-            if (!res.headersSent) {
-                res.status(500).json({ 
-                    error: 'Error loading page',
-                    message: err.message,
-                    path: indexPath
-                });
-            }
+    // For ALL other routes (login, profile, signup, app, practice, problems, etc.)
+    // serve the React app - React Router will handle the routing client-side
+    console.log(`[Catch-all GET] Serving React app for route: ${req.path}`);
+    serveReactApp(req, res);
+});
+
+// Also catch HEAD requests (browsers often send HEAD before GET)
+app.head('*', (req, res) => {
+    const backendOnlyRoutes = ['/api', '/socket.io', '/health'];
+    const isBackendRoute = backendOnlyRoutes.some(route => 
+        req.path === route || req.path.startsWith(route + '/')
+    );
+    
+    if (!isBackendRoute) {
+        const indexPath = path.join(frontendPath, 'index.html');
+        if (fs.existsSync(indexPath)) {
+            res.sendFile(indexPath);
+        } else {
+            res.status(404).end();
         }
-    });
+    } else {
+        res.status(404).end();
+    }
 });
 
 server.listen(PORT, () => {

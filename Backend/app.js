@@ -11,7 +11,7 @@ import isLoggedIn from './middleware/isloggedin.js';
 import dotenv from 'dotenv';
 import { Server } from "socket.io";
 import { LeetCode } from 'leetcode-query';
-import UserActivity from '../Backend/models/userActivity.js'; // Import the UserActivity model
+import UserActivity from '../Backend/models/userActivity.js'; 
 
 
 const app = express();
@@ -33,7 +33,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieparser());
 app.use(cors({
-    origin: ["https://collaborative-code-editor-ilbd.onrender.com"] ,
+    origin: process.env.NODE_ENV === "production"
+    ? "https://collaborative-code-editor-ilbd.onrender.com"
+    : ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization']
@@ -45,10 +47,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        secure: true,
+         httpOnly: true,
+        sameSite: 'none',
+        maxAge: 24 * 60 * 60 * 1000 
     },
     name: 'sessionId',
     rolling: true
@@ -64,9 +66,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const io = new Server(server, {
     cors: {
-        origin: process.env.NODE_ENV === 'production' 
-            ? [process.env.FRONTEND_URL || "https://your-frontend-app.onrender.com"] 
-            : ["http://localhost:5173", "http://localhost:5174"],
+        origin:  process.env.NODE_ENV === "production"
+        ? "https://collaborative-code-editor-ilbd.onrender.com"
+        : ["http://localhost:5173", "http://localhost:5174"],
         methods: ["GET", "POST"],
         credentials: true,
         transports: ['websocket']

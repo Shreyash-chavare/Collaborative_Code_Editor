@@ -35,19 +35,20 @@ const Profile = () => {
         setIsLoading(true);
         const response = await axiosinstance.get(`/api/user/activity`);
         
-        if (!response.ok) {
-          throw new Error('Failed to fetch activity data');
+        // Axios automatically parses JSON - use response.data, not response.json()
+        const data = response.data;
+        console.log('Activity data:', data);
+        
+        if (Array.isArray(data)) {
+          setActivityData(data);
+          // Calculate days active
+          setDaysActive(new Set(data.map(item => item.date)).size);
+        } else {
+          throw new Error('Invalid data format received');
         }
-        
-        const data = await response.json();
-        console.log(data)
-        setActivityData(data);
-        
-        // Calculate days active
-        setDaysActive(new Set(data.map(item => item.date)).size);
       } catch (err) {
         console.error('Error fetching activity data:', err);
-        setError(err.message);
+        setError(err.response?.data?.error || err.message || 'Failed to fetch activity data');
         // Fall back to sample data if API fails
         setActivityData(generateSampleActivityData());
       } finally {

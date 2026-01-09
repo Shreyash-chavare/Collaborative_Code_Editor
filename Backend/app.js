@@ -260,7 +260,13 @@ app.post("/api/compile", async (req, res) => {
 app.get('/api/user/activity', isLoggedIn, async (req, res) => {
     try {
       // Get user ID from session
+      if (!req.session || !req.session.user || !req.session.user.id) {
+        console.error('No user session found in activity endpoint');
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+      
       const userId = req.session.user.id;
+      console.log('Fetching activity for user:', userId);
       
       // Calculate date one year ago
       const oneYearAgo = new Date();
@@ -270,7 +276,9 @@ app.get('/api/user/activity', isLoggedIn, async (req, res) => {
       const activities = await UserActivity.find({
         userId: userId,
         date: { $gte: oneYearAgo }
-      }).select('date -_id');
+      }).select('date -_id').lean(); // Use .lean() for better performance
+      
+      console.log(`Found ${activities.length} activities for user ${userId}`);
       
       // Group by date
       const groupedActivities = activities.reduce((acc, activity) => {
@@ -288,10 +296,15 @@ app.get('/api/user/activity', isLoggedIn, async (req, res) => {
         count: groupedActivities[date]
       }));
       
+      console.log(`Returning ${activityData.length} grouped activity entries`);
       res.json(activityData);
     } catch (error) {
       console.error('Error fetching user activity:', error);
-      res.status(500).json({ error: 'Failed to fetch activity data' });
+      console.error('Error stack:', error.stack);
+      res.status(500).json({ 
+        error: 'Failed to fetch activity data',
+        message: error.message 
+      });
     }
   });
 

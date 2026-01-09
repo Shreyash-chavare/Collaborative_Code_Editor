@@ -68,18 +68,19 @@ const LeetCodeProblems = () => {
                 console.log('Starting problems fetch...'); // Debug log
                 const response = await axiosinstance.get('/api/leetcode/problems');
 
-                const data = await response.json();
+                // Axios automatically parses JSON - use response.data, not response.json()
+                const data = response.data;
 
-                if (!response.ok) {
-                    throw new Error(data.error || `Server error: ${response.status}`);
+                if (Array.isArray(data)) {
+                    console.log('Problems fetched successfully:', data); // Debug log
+                    setProblemlist(data);
+                } else {
+                    throw new Error(data.error || 'Invalid data format received');
                 }
-
-                console.log('Problems fetched successfully:', data); // Debug log
-                setProblemlist(data);
                 setLoading(false);
             } catch (err) {
                 console.error('Error details:', err); // Debug log
-                setError(err.message);
+                setError(err.response?.data?.error || err.message || 'Failed to fetch problems');
                 setLoading(false);
             }
         };
@@ -95,16 +96,17 @@ const LeetCodeProblems = () => {
         try {
             const response = await axiosinstance.get(`/api/leetcode/problem/${questionId}`);
 
-            const data = await response.json();
+            // Axios automatically parses JSON - use response.data, not response.json()
+            const data = response.data;
 
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to fetch problem details');
+            if (data) {
+                setSelectedProblem(data);
+            } else {
+                throw new Error('No problem data received');
             }
-
-            setSelectedProblem(data);
         } catch (err) {
             console.error('Search error:', err);
-            setError(err.message);
+            setError(err.response?.data?.error || err.message || 'Failed to fetch problem details');
         } finally {
             setSearchLoading(false);
         }
@@ -132,17 +134,18 @@ const LeetCodeProblems = () => {
         try {
             const response = await axiosinstance.get(`/api/leetcode/problem/${problemId}`);
 
-            const data = await response.json();
+            // Axios automatically parses JSON - use response.data, not response.json()
+            const data = response.data;
 
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to fetch problem details');
+            if (data) {
+                setSelectedProblem(data);
+                setExpandedProblemId(problemId);
+            } else {
+                throw new Error('No problem data received');
             }
-
-            setSelectedProblem(data);
-            setExpandedProblemId(problemId);
         } catch (err) {
             console.error('Error fetching problem details:', err);
-            setError(err.message);
+            setError(err.response?.data?.error || err.message || 'Failed to fetch problem details');
         }
     };
 

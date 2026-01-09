@@ -8,7 +8,8 @@ export const onSignin = async (formData, navigate) => {
     try {
       const response = await axios.post("/login", formData);
   
-      const data = await response.json();
+      // Axios automatically parses JSON - use response.data, not response.json()
+      const data = response.data;
   
       if (data.success) {
         // Update auth store with user data
@@ -23,7 +24,7 @@ export const onSignin = async (formData, navigate) => {
       }
     } catch (error) {
       console.error("Error during login:", error);
-      toast.error("Login failed");
+      toast.error(error.response?.data?.message || "Login failed");
     }
 };
   

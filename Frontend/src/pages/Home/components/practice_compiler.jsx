@@ -35,16 +35,14 @@ const JDoodleCompiler = () => {
         };
 
         try {
-            const response = await axiosinstance.post("/api/compile",requestData);
+            const response = await axiosinstance.post("/api/compile", requestData);
 
-            if (!response.ok) {
-                throw new Error("Server error: " + response.statusText);
-            }
-
-            const result = await response.json();
-            setOutput(result.output || result.error);
+            // Axios automatically parses JSON - use response.data, not response.json()
+            const result = response.data;
+            setOutput(result.output || result.error || "No output received");
         } catch (error) {
-            setOutput("Error: " + error.message);
+            console.error("Compilation error:", error);
+            setOutput("Error: " + (error.response?.data?.error || error.message || "Failed to compile"));
         }
     };
 

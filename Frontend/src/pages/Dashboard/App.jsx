@@ -127,9 +127,10 @@ function Dashboard() {
     try {
       const response = await axiosinstance.get('/getUsername');
 
-      const data = await response.json();
+      // Axios automatically parses JSON - use response.data, not response.json()
+      const data = response.data;
 
-      if (response.ok) {
+      if (data.success && data.username) {
         setUsername(data.username);
         setRoomId(inputRoomId);
         setFlag(true);
@@ -137,17 +138,20 @@ function Dashboard() {
         setInputRoomId("");
         console.log(`Got username: ${data.username}`);
 
-        socketRef.current.emit("join-room", inputRoomId);
+        if (socketRef.current) {
+          socketRef.current.emit("join-room", inputRoomId);
 
-        socketRef.current.emit("add-member", {
-          room: inputRoomId,
-          username: data.username
-        });
+          socketRef.current.emit("add-member", {
+            room: inputRoomId,
+            username: data.username
+          });
+        }
       } else {
-        console.error("Failed to get username:", data.message);
+        console.error("Failed to get username:", data.message || "Unknown error");
       }
     } catch (error) {
       console.error("Error fetching username:", error);
+      console.error("Error details:", error.response?.data || error.message);
     }
   };
 
